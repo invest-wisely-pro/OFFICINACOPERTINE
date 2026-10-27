@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Officina delle Copertine</title>
+<style>
+:root{
+  --bg:#2B2D31; --panel:#35383E; --panel2:#3E424A; --line:#4A4F58; --ink:#E9E7E3; --ink2:#B9B6B0; --ink3:#8E8B86;
+  --magenta:#D6006E; --magenta2:#F0388F; --cyan:#0FA3C9; --yellow:#E8C200; --ok:#4FB37A; --warn:#E89B2E; --bad:#E5574A;
+  --ui:'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:border-box;}
+html, body{height:100%;}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--ui); font-size:14px; line-height:1.45; display:flex; flex-direction:column;}
+button, input, select, textarea{font:inherit; color:inherit;}
+:focus-visible{outline:2px solid var(--magenta2); outline-offset:2px;}
+.hidden{display:none !important;}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+
+/* ---------- Testata ---------- */
+.top{display:flex; align-items:center; gap:14px; padding:10px 16px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap;}
+.mark{width:30px; height:30px; flex:0 0 auto; position:relative;}
+.mark::before{content:""; position:absolute; inset:6px; border:2px solid var(--ink); border-radius:50%;}
+.mark::after{content:""; position:absolute; left:50%; top:0; bottom:0; width:2px; margin-left:-1px; background:var(--ink); box-shadow:0 0 0 0 transparent;}
+.mark i{position:absolute; top:50%; left:0; right:0; height:2px; margin-top:-1px; background:var(--ink);}
+.brand{font-weight:700; font-size:16px; letter-spacing:.01em; margin-right:6px; white-space:nowrap;}
+.pname{flex:1 1 220px; max-width:420px; height:34px; padding:0 10px; border-radius:6px; border:1px solid var(--line); background:var(--bg);}
+.top .sp{flex:1;}
+.btn{height:34px; padding:0 13px; border-radius:6px; border:1px solid var(--line); background:var(--panel2); cursor:pointer; font-weight:600; font-size:13.5px; white-space:nowrap;}
+.btn:hover{border-color:var(--ink3);}
+.btn.primary{background:var(--magenta); border-color:var(--magenta); color:#fff;}
+.btn.small{height:28px; padding:0 9px; font-size:12.5px;}
+.btn.danger{color:var(--bad);}
+.saved{font-size:12px; color:var(--ink3); white-space:nowrap;}
+
+/* ---------- Area di lavoro ---------- */
+.work{flex:1; display:grid; grid-template-columns:360px minmax(0, 1fr); min-height:0;}
+@media (max-width:900px){ .work{grid-template-columns:minmax(0, 1fr);} .side{max-height:none !important;} }
+.side{background:var(--panel); border-right:1px solid var(--line); overflow-y:auto; max-height:calc(100vh - 56px);}
+.sec{border-bottom:1px solid var(--line);}
+.sec > summary{list-style:none; cursor:pointer; padding:12px 16px; font-weight:700; font-size:14.5px; display:flex; align-items:center; gap:10px;}
+.sec > summary::-webkit-details-marker{display:none;}
+.sec > summary .n{width:22px; height:22px; border-radius:50%; background:var(--panel2); color:var(--ink2); font-size:12px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;}
+.sec[open] > summary .n{background:var(--magenta); color:#fff;}
+.sec > summary .st{margin-left:auto; font-weight:500; font-size:12px; color:var(--ink3);}
+.body{padding:2px 16px 16px; display:flex; flex-direction:column; gap:10px;}
+.f{display:flex; flex-direction:column; gap:4px; min-width:0;}
+.f label, .lab{font-size:12px; font-weight:600; color:var(--ink2);}
+.f input, .f select, .f textarea{height:32px; padding:0 9px; border-radius:6px; border:1px solid var(--line); background:var(--bg); min-width:0;}
+.f textarea{height:auto; min-height:90px; padding:7px 9px; resize:vertical;}
+.f input[type=range]{padding:0; height:24px; accent-color:var(--magenta);}
+.f input[type=color]{padding:2px; width:48px;}
+.row{display:grid; grid-template-columns:repeat(auto-fit, minmax(90px, 1fr)); gap:8px;}
+.chk{display:flex; align-items:center; gap:8px; font-size:13px;}
+.chk input{width:16px; height:16px; accent-color:var(--magenta);}
+.feats{display:grid; grid-template-columns:1fr 1fr; gap:6px 10px;}
+.note{font-size:12px; color:var(--ink3);}
+.drop{border:1.5px dashed var(--line); border-radius:8px; padding:10px; display:flex; gap:10px; align-items:center; cursor:pointer; background:var(--bg);}
+.drop:hover, .drop.over{border-color:var(--magenta2);}
+.drop .thumb{width:46px; height:58px; border-radius:3px; background:var(--panel2) center/cover no-repeat; flex:0 0 auto;}
+.drop b{display:block; font-size:13px;}
+.res{font-size:12px; font-weight:600;}
+.res.ok{color:var(--ok);} .res.warn{color:var(--warn);} .res.bad{color:var(--bad);}
+.stills{display:flex; gap:6px; flex-wrap:wrap;}
+.still{width:62px; height:40px; border-radius:3px; background:var(--panel2) center/cover no-repeat; position:relative;}
+.still button{position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; border:0; background:var(--bad); color:#fff; font-size:12px; line-height:1; cursor:pointer;}
+.logos{display:flex; flex-direction:column; gap:6px;}
+.logo{display:grid; grid-template-columns:54px minmax(0, 1fr) auto; gap:8px; align-items:center; padding:6px; border:1px solid var(--line); border-radius:6px; background:var(--bg);}
+.logo .lt{height:26px; background:#fff0 center/contain no-repeat; border-radius:3px; background-color:#6a6e76;}
+.logo b{font-size:12.5px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.logo span{font-size:11.5px; color:var(--ink3);}
+
+/* ---------- Anteprima ---------- */
+.stage{position:relative; overflow:auto; display:flex; flex-direction:column; align-items:center; padding:22px 22px 30px; gap:12px; min-height:0; max-height:calc(100vh - 56px);}
+.stagebar{display:flex; gap:14px; align-items:center; flex-wrap:wrap; color:var(--ink2); font-size:12.5px; width:100%; max-width:1300px;}
+.stagebar .sp{flex:1;}
+.legend{display:flex; gap:12px; align-items:center;}
+.legend i{display:inline-block; width:18px; height:0; border-top:2px solid; vertical-align:middle; margin-right:4px;}
+canvas#preview{max-width:100%; box-shadow:0 18px 50px rgba(0,0,0,.45); background:#555; cursor:default; touch-action:none;}
+canvas#preview.grab{cursor:grab;} canvas#preview.grabbing{cursor:grabbing;}
+.panels{display:flex; justify-content:center; gap:0; width:100%; max-width:1300px; font-size:12px; color:var(--ink3);}
+
+/* ---------- Finestre ---------- */
+dialog{border:1px solid var(--line); border-radius:10px; padding:0; background:var(--panel); color:var(--ink); width:min(860px, 96vw); max-height:90vh; box-shadow:0 24px 70px rgba(0,0,0,.55);}
+dialog::backdrop{background:rgba(10,10,12,.6);}
+.dh{display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--panel); z-index:1;}
+.dh h2{margin:0; font-size:17px; flex:1;}
+.db{padding:14px 16px; overflow:auto; max-height:calc(90vh - 110px);}
+.df{display:flex; gap:10px; justify-content:flex-end; padding:12px 16px; border-top:1px solid var(--line);}
+.plist{display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:12px;}
+.pcard{border:1px solid var(--line); border-radius:8px; background:var(--bg); overflow:hidden; display:flex; flex-direction:column;}
+.pcard img{width:100%; aspect-ratio:2/1; object-fit:cover; background:#444; display:block;}
+.pcard .pi{padding:8px 10px; display:flex; flex-direction:column; gap:2px;}
+.pcard b{font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.pcard .pa{display:flex; gap:6px; padding:0 10px 10px; flex-wrap:wrap; align-items:center;}
+.films{display:flex; flex-direction:column; gap:4px; margin-top:10px;}
+.film{display:grid; grid-template-columns:34px minmax(0, 1fr) auto; gap:10px; align-items:center; padding:6px 8px; border-radius:6px; border:1px solid transparent; background:var(--bg); cursor:pointer; text-align:left;}
+.film:hover{border-color:var(--line);}
+.film img{width:34px; height:48px; object-fit:cover; border-radius:2px; background:#444;}
+.film b{display:block;} .film span{font-size:12px; color:var(--ink3);}
+.toast{position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:50; background:var(--ink); color:var(--bg); padding:9px 15px; border-radius:7px; font-weight:600; font-size:13.5px; opacity:0; transition:opacity .2s; pointer-events:none; max-width:92vw;}
+.toast.show{opacity:1;}
+.undo{position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:51; display:flex; gap:12px; align-items:center; background:var(--ink); color:var(--bg); padding:7px 7px 7px 14px; border-radius:7px; font-weight:600; font-size:13.5px;}
+.undo .btn{background:var(--bg); color:var(--ink); border-color:var(--bg);}
+#print{display:none;}
+@media print{
+  @page{ size:A4 landscape; margin:0; }
+  body{background:#fff;} .top, .work, dialog, .toast, .undo{display:none !important;}
+  #print{display:flex; align-items:center; justify-content:center; width:297mm; height:209mm;}
+  #print img{display:block;}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="mark" aria-hidden="true"><i></i></div>
+  <div class="brand">Officina delle Copertine</div>
+  <input class="pname" id="pname" aria-label="Nome del progetto" placeholder="Nome del progetto">
+  <span class="saved" id="saved"></span>
+  <span class="sp"></span>
+  <button class="btn" id="newBtn">Nuova copertina</button>
+  <button class="btn" id="archBtn">Archivio</button>
+  <button class="btn primary" id="pdfBtnTop">Scarica il PDF da stampare</button>
+</header>
+
+<div class="work">
+  <aside class="side" aria-label="Impostazioni della copertina">
+    <details class="sec" open id="s-format"><summary><span class="n">1</span>Formato<span class="st" id="st-format"></span></summary>
+      <div class="body">
+        <div class="f"><label for="format">Custodia</label><select id="format" data-bind="format"></select></div>
+        <div class="row">
+          <div class="f"><label for="dH">Altezza (mm)</label><input id="dH" type="number" step="0.5" data-bind="dims.H" data-num></div>
+          <div class="f"><label for="dP">Fronte e retro (mm)</label><input id="dP" type="number" step="0.5" data-bind="dims.P" data-num></div>
+          <div class="f"><label for="dS">Dorso (mm)</label><input id="dS" type="number" step="0.5" data-bind="dims.S" data-num></div>
+        </div>
+        <div class="f"><label for="bandH">Altezza della fascia superiore (mm)</label><input id="bandH" type="number" step="0.5" data-bind="dims.band" data-num></div>
+        <p class="note" id="dimNote"></p>
+        <div class="row"><button class="btn small" id="stdDims">Misure standard</button><button class="btn small" id="testPdf">Prova di stampa (sagoma)</button></div>
+        <p class="note">Lo spessore delle custodie cambia tra produttori: misura il dorso della tua custodia e stampa la sagoma su carta normale per controllare che l'inserto entri nella pellicola.</p>
+      </div>
+    </details>
+
+    <details class="sec" id="s-film"><summary><span class="n">2</span>Film<span class="st" id="st-film"></span></summary>
+      <div class="body">
+        <button class="btn" id="importBtn">Scegli il film dalla Videoteca</button>
+        <input type="file" id="importIn" accept=".json,application/json" class="hidden">
+        <div class="f"><label for="titolo">Titolo</label><input id="titolo" data-bind="film.titolo"></div>
+        <div class="row">
+          <div class="f"><label for="anno">Anno</label><input id="anno" data-bind="film.anno"></div>
+          <div class="f"><label for="durata">Durata (minuti)</label><input id="durata" data-bind="film.durata"></div>
+        </div>
+        <div class="f"><label for="regia">Regia</label><input id="regia" data-bind="film.regia"></div>
+        <div class="f"><label for="cast">Interpreti</label><input id="cast" data-bind="film.cast"></div>
+        <div class="f"><label for="tagline">Frase di lancio (sul retro)</label><input id="tagline" data-bind="film.tagline"></div>
+        <div class="f"><label for="trama">Trama</label><textarea id="trama" data-bind="film.trama"></textarea></div>
+        <div class="f"><label for="crediti">Crediti in piccolo (facoltativi)</label><textarea id="crediti" data-bind="film.crediti" style="min-height:60px" placeholder="Lasciali vuoti per comporli da regia e interpreti"></textarea></div>
+        <div class="row">
+          <div class="f"><label for="ean">Codice a barre (EAN)</label><input id="ean" data-bind="film.ean" inputmode="numeric"></div>
+          <div class="f"><label for="numero">Numero nella collezione</label><input id="numero" data-bind="film.numero"></div>
+        </div>
+        <p class="note" id="eanNote"></p>
+      </div>
+    </details>
+
+    <details class="sec" id="s-ed"><summary><span class="n">3</span>Edizione<span class="st" id="st-ed"></span></summary>
+      <div class="body">
+        <div class="f"><label for="edName">Nome dell'edizione (facoltativo)</label><input id="edName" data-bind="ed.nome" placeholder="es. Edizione da collezione"></div>
+        <span class="lab">Caratteristiche video e audio</span>
+        <div class="feats" id="feats"></div>
+        <div class="row">
+          <div class="f"><label for="video">Video</label><input id="video" data-bind="ed.video" placeholder="es. 2160p, 2.39:1"></div>
+          <div class="f"><label for="dischi">Dischi</label><input id="dischi" data-bind="ed.dischi"></div>
+        </div>
+        <div class="f"><label for="audio">Audio</label><input id="audio" data-bind="ed.audio" placeholder="es. Italiano Dolby Atmos, Inglese Dolby Atmos"></div>
+        <div class="f"><label for="subs">Sottotitoli</label><input id="subs" data-bind="ed.subs" placeholder="es. Italiano, Inglese"></div>
+        <div class="row">
+          <div class="f"><label for="regione">Regione</label><input id="regione" data-bind="ed.regione" placeholder="es. B"></div>
+          <div class="f"><label for="extra">Contenuti speciali</label><input id="extra" data-bind="ed.extra" placeholder="es. Making of, Trailer"></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="sec" id="s-img"><summary><span class="n">4</span>Immagini<span class="st" id="st-img"></span></summary>
+      <div class="body">
+        <div class="drop" data-drop="front" tabindex="0" role="button"><span class="thumb" id="th-front"></span><span><b>Immagine del fronte</b><span class="note">Trascina qui o clicca per scegliere</span><br><span class="res" id="res-front"></span></span></div>
+        <div class="row">
+          <div class="f"><label for="zoom">Ingrandimento</label><input id="zoom" type="range" min="1" max="3" step="0.01" data-bind="img.zoom" data-num></div>
+          <div class="f" style="justify-content:flex-end"><button class="btn small" id="centerImg">Ricentra</button></div>
+        </div>
+        <div class="f"><label for="fit">Adattamento del fronte</label><select id="fit" data-bind="img.fit"><option value="cover">Riempi il fronte (l'immagine può essere ritagliata)</option><option value="contain">Immagine intera, con sfondo sfumato ai lati</option></select></div>
+        <p class="note">Per spostare l'immagine, trascinala direttamente sul fronte dell'anteprima.</p>
+        <div class="f"><label for="backMode">Sfondo di dorso e retro</label><select id="backMode" data-bind="img.backMode">
+          <option value="blur">Immagine del fronte, sfumata</option><option value="mirror">Immagine del fronte, a specchio (meglio senza scritte)</option><option value="color">Colore preso dall'immagine</option><option value="image">Un'altra immagine</option></select></div>
+        <div class="drop" data-drop="back" tabindex="0" role="button"><span class="thumb" id="th-back"></span><span><b>Immagine del retro</b><span class="note">Facoltativa: si usa con "Un'altra immagine"</span></span></div>
+        <div class="drop" data-drop="spine" tabindex="0" role="button"><span class="thumb" id="th-spine"></span><span><b>Immagine del dorso</b><span class="note">Facoltativa</span></span></div>
+        <span class="lab">Fotogrammi sul retro (fino a 3)</span>
+        <div class="stills" id="stills"></div>
+        <div class="drop" data-drop="still" tabindex="0" role="button"><span><b>Aggiungi un fotogramma</b></span></div>
+        <input type="file" id="imgIn" accept="image/*" class="hidden">
+      </div>
+    </details>
+
+    <details class="sec" id="s-logo"><summary><span class="n">5</span>Loghi<span class="st" id="st-logo"></span></summary>
+      <div class="body">
+        <p class="note">I loghi ufficiali (4K Ultra HD, Blu-ray, Dolby, DTS…) sono marchi registrati: caricali tu una volta sola, in PNG trasparente o SVG, e l'app li userà da sola su tutte le copertine. Senza logo usa un'etichetta neutra.</p>
+        <div class="logos" id="logos"></div>
+        <div class="row"><div class="f"><label for="logoType">Tipo del logo da caricare</label><select id="logoType"></select></div><div class="f" style="justify-content:flex-end"><button class="btn small" id="addLogo">Carica un logo</button></div></div>
+        <input type="file" id="logoIn" accept="image/png,image/svg+xml,image/webp" class="hidden">
+        <label class="chk"><input type="checkbox" data-bind="style.frontLogos"> Loghi tecnici in basso sul fronte</label>
+        <label class="chk"><input type="checkbox" data-bind="style.backLogos"> Loghi tecnici nel riquadro del retro</label>
+        <label class="chk"><input type="checkbox" data-bind="style.studioLogos"> Loghi del distributore sul retro e sul dorso</label>
+      </div>
+    </details>
+
+    <details class="sec" id="s-style"><summary><span class="n">6</span>Stile<span class="st" id="st-style"></span></summary>
+      <div class="body">
+        <div class="f"><label for="preset">Impaginazione del retro</label><select id="preset" data-bind="style.preset"><option value="classico">Classica, centrata</option><option value="moderno">Moderna, allineata a sinistra</option><option value="minimal">Essenziale</option></select></div>
+        <div class="row">
+          <div class="f"><label for="titleFont">Carattere dei titoli</label><select id="titleFont" data-bind="style.titleFont"></select></div>
+          <div class="f"><label for="bodyFont">Carattere dei testi</label><select id="bodyFont" data-bind="style.bodyFont"></select></div>
+        </div>
+        <div class="row">
+          <div class="f"><label for="colorMode">Colore dei testi</label><select id="colorMode" data-bind="style.colorMode"><option value="auto">Automatico</option><option value="custom">Scelto da me</option></select></div>
+          <div class="f"><label for="textColor">Colore</label><input id="textColor" type="color" data-bind="style.textColor"></div>
+        </div>
+        <div class="f"><label for="spineDir">Verso del titolo sul dorso</label><select id="spineDir" data-bind="style.spineDir"><option value="bt">Dal basso verso l'alto (uso europeo)</option><option value="tb">Dall'alto verso il basso (uso americano)</option></select></div>
+        <label class="chk"><input type="checkbox" data-bind="style.frontTitle"> Titolo scritto anche sul fronte</label>
+        <div class="f"><label for="frontTitlePos">Posizione del titolo sul fronte</label><select id="frontTitlePos" data-bind="style.frontTitlePos"><option value="bottom">In basso</option><option value="top">In alto, sotto la fascia</option></select></div>
+        <label class="chk"><input type="checkbox" data-bind="style.backBand"> Fascia del formato anche sul retro</label>
+      </div>
+    </details>
+
+    <details class="sec" id="s-print"><summary><span class="n">7</span>Stampa<span class="st"></span></summary>
+      <div class="body">
+        <button class="btn primary" id="pdfA4">PDF su A4 per la stampante di casa</button>
+        <p class="note">Stampalo con "Dimensioni effettive" o "100%", mai "Adatta alla pagina". Ci sono i segni di taglio e di piega.</p>
+        <button class="btn" id="pdfPro">PDF per la tipografia (con abbondanza)</button>
+        <button class="btn" id="pngPro">Immagine PNG a 300 dpi</button>
+        <button class="btn" id="printBtn">Stampa direttamente</button>
+        <p class="note">I file sono a colori RGB, accettati dalla maggior parte delle tipografie digitali. Per la stampa offset in CMYK chiedi alla tipografia di convertirli.</p>
+      </div>
+    </details>
+  </aside>
+
+  <section class="stage" aria-label="Anteprima">
+    <div class="stagebar">
+      <span class="legend"><span><i style="border-color:var(--cyan)"></i>taglio e piega</span><span><i style="border-color:var(--magenta2); border-top-style:dashed"></i>margine di sicurezza</span></span>
+      <span class="sp"></span>
+      <label class="chk"><input type="checkbox" id="guides" checked> Mostra le guide</label>
+    </div>
+    <canvas id="preview" width="1200" height="700" aria-label="Anteprima della copertina"></canvas>
+    <div class="panels" id="panels"></div>
+  </section>
+</div>
+
+<dialog id="archDlg" aria-labelledby="archH">
+  <div class="dh"><h2 id="archH">Archivio delle copertine</h2><button class="btn small" data-close>Chiudi</button></div>
+  <div class="db"><div class="plist" id="plist"></div></div>
+  <div class="df"><span class="note" id="archSel" style="margin-right:auto; align-self:center"></span><button class="btn" id="batchPro">PDF per la tipografia delle selezionate</button><button class="btn primary" id="batchA4">PDF A4 delle selezionate</button></div>
+</dialog>
+
+<dialog id="filmDlg" aria-labelledby="filmH">
+  <div class="dh"><h2 id="filmH">Scegli il film dalla Videoteca</h2><button class="btn small" data-close>Chiudi</button></div>
+  <div class="db">
+    <div class="f"><label for="filmQ">Cerca</label><input id="filmQ" type="search" placeholder="Titolo, regista, anno"></div>
+    <div class="films" id="films"></div>
+  </div>
+</dialog>
+
+<div id="print"></div>
+<div class="undo hidden" id="undoBar" role="status" aria-live="polite"><span id="undoMsg"></span><button class="btn small" id="undoBtn">Annulla</button></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* =====================================================================
+   Officina delle Copertine — copertine per custodie DVD, Blu-ray, 4K UHD
+   Tutto in locale. Il disegno è in millimetri: anteprima e stampa a
+   300 dpi usano la stessa funzione, cambia solo la scala.
+   ===================================================================== */
+const APP_VERSION = '1.0';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const BLEED = 3;
+const FORMATS = {
+  dvd:   { name: 'DVD', H: 183, P: 129.5, S: 14, band: 0, color: null, logo: 'dvd' },
+  bd:    { name: 'Blu-ray', H: 148.5, P: 130, S: 13, band: 14, color: '#1560BD', logo: 'bd' },
+  uhd:   { name: '4K Ultra HD', H: 148.5, P: 130, S: 13, band: 14, color: '#000000', logo: 'uhd' },
+  combo: { name: '4K Ultra HD + Blu-ray', H: 148.5, P: 130, S: 13, band: 14, color: '#000000', logo: 'uhd', second: 'bd' }
+};
+const FEATS = [['hdr10', 'HDR10'], ['hdr10plus', 'HDR10+'], ['dolbyvision', 'Dolby Vision'], ['atmos', 'Dolby Atmos'], ['dtsx', 'DTS:X'], ['dtshdma', 'DTS-HD Master Audio'], ['imax', 'IMAX Enhanced'], ['dd', 'Dolby Digital']];
+const LOGO_TYPES = [['uhd', '4K Ultra HD'], ['bd', 'Blu-ray'], ['dvd', 'DVD'], ...FEATS, ['studio', 'Distributore (logo libero)']];
+const BADGE = { uhd: '4K ULTRA HD', bd: 'BLU-RAY', dvd: 'DVD' };
+const BADGE_SHORT = { uhd: '4K UHD', bd: 'BLU-RAY', dvd: 'DVD' };
+const FONTS_TITLE = ['Bahnschrift Condensed', 'Bahnschrift', 'Arial Narrow', 'Impact', 'Georgia', 'Trebuchet MS', 'Segoe UI', 'Times New Roman'];
+const FONTS_BODY = ['Segoe UI', 'Arial', 'Georgia', 'Bahnschrift', 'Trebuchet MS', 'Calibri', 'Times New Roman'];
+const lbl = (arr, k) => (arr.find(x=>x[0] === k) || [k, k])[1];
+const fam = f => `"${f}", "Arial Narrow", Arial, sans-serif`;
+
+function newProject(){
+  const f = FORMATS.bd;
+  return { id: uid(), name: '', updated: Date.now(), format: 'bd', dims: { H: f.H, P: f.P, S: f.S, band: f.band },
+    film: { titolo: '', anno: '', durata: '', regia: '', cast: '', tagline: '', trama: '', crediti: '', ean: '', numero: '' },
+    ed: { nome: '', feat: [], video: '', audio: '', subs: '', regione: '', dischi: '', extra: '' },
+    img: { front: '', back: '', spine: '', stills: [], zoom: 1, ox: 0, oy: 0, backMode: 'blur', fit: 'cover' },
+    style: { preset: 'classico', titleFont: 'Bahnschrift Condensed', bodyFont: 'Segoe UI', colorMode: 'auto', textColor: '#ffffff', spineDir: 'bt', frontTitle: false, frontTitlePos: 'bottom', frontLogos: true, backLogos: true, studioLogos: true, backBand: false } };
+}
+
+/* ---------- Immagini: caricamento, adattamento, sfumatura, colori ---------- */
+const IMG = new Map(), PAL = new Map();
+let _onImg = () => {};
+function img(src){
+  if(!src) return null;
+  let e = IMG.get(src);
+  if(!e){ const im = new Image(); e = { im, ok: false, bad: false }; IMG.set(src, e);
+    if(/^https?:/.test(src)) im.crossOrigin = 'anonymous';
+    im.onload = () => { e.ok = true; _onImg(); }; im.onerror = () => { e.bad = true; _onImg(); }; im.src = src; }
+  return e.ok ? e.im : null;
+}
+const imgW = im => im.naturalWidth || im.width, imgH = im => im.naturalHeight || im.height;
+function coverRect(im, x, y, w, h, zoom, ox, oy){
+  const s = Math.max(w / imgW(im), h / imgH(im)) * (zoom || 1), dw = imgW(im) * s, dh = imgH(im) * s;
+  let dx = x + (w - dw) / 2 + (ox || 0), dy = y + (h - dh) / 2 + (oy || 0);
+  dx = Math.min(x, Math.max(x + w - dw, dx)); dy = Math.min(y, Math.max(y + h - dh, dy));   // l'immagine copre sempre tutto il riquadro
+  return { dx, dy, dw, dh, s };
+}
+function containRect(im, x, y, w, h, zoom, ox, oy){   // immagine intera: si vede tutta, centrata; spostabile entro il riquadro
+  const s = Math.min(w / imgW(im), h / imgH(im)) * (zoom || 1), dw = imgW(im) * s, dh = imgH(im) * s;
+  let dx = x + (w - dw) / 2 + (ox || 0), dy = y + (h - dh) / 2 + (oy || 0);
+  dx = dw <= w ? Math.max(x, Math.min(x + w - dw, dx)) : Math.min(x, Math.max(x + w - dw, dx));
+  dy = dh <= h ? Math.max(y, Math.min(y + h - dh, dy)) : Math.min(y, Math.max(y + h - dh, dy));
+  return { dx, dy, dw, dh, s };
+}
+const fitRect = (P, im, A, ox, oy) => (P.img.fit === 'contain' ? containRect : coverRect)(im, A.x, A.y, A.w, A.h, P.img.zoom, ox, oy);
+function drawCover(ctx, im, x, y, w, h, zoom, ox, oy){
+  const r = coverRect(im, x, y, w, h, zoom, ox, oy);
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.drawImage(im, r.dx, r.dy, r.dw, r.dh); ctx.restore();
+  return r;
+}
+function mkCanvas(w, h){ const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+function drawBlur(ctx, im, x, y, w, h){   // sfumatura che funziona ovunque: si rimpicciolisce e si riingrandisce
+  const sw = 40, sh = Math.max(1, Math.round(sw * h / w)), c = mkCanvas(sw, sh), cx = c.getContext('2d');
+  drawCover(cx, im, 0, 0, sw, sh);
+  ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.imageSmoothingEnabled = true; try{ ctx.imageSmoothingQuality = 'high'; }catch(e){}
+  ctx.drawImage(c, x - w * 0.04, y - h * 0.04, w * 1.08, h * 1.08); ctx.restore();
+}
+function palette(im){
+  if(!im) return { dark: '#1A1B1F', avg: '#3A3C42', light: '#DADADA', lum: 0.2 };
+  const key = im.src; if(PAL.has(key)) return PAL.get(key);
+  let r = 40, g = 40, b = 45;
+  try{ const c = mkCanvas(24, 24), cx = c.getContext('2d'); cx.drawImage(im, 0, 0, 24, 24); const d = cx.getImageData(0, 0, 24, 24).data; let n = 0; r = g = b = 0;
+    for(let i = 0; i < d.length; i += 4){ r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; } r /= n; g /= n; b /= n; }catch(e){}
+  const hex = (R, G, B) => '#' + [R, G, B].map(v=>Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('');
+  const p = { avg: hex(r, g, b), dark: hex(r * 0.32, g * 0.32, b * 0.34), light: hex(r + (255 - r) * 0.8, g + (255 - g) * 0.8, b + (255 - b) * 0.8), lum: (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 };
+  PAL.set(key, p); return p;
+}
+
+/* ---------- Testi ---------- */
+function font(ctx, size, family, weight){ ctx.font = `${weight || 400} ${size}px ${fam(family)}`; }
+function wrap(ctx, text, maxW){
+  const out = [];
+  String(text || '').split(/\n/).forEach(par=>{
+    const words = par.split(/\s+/).filter(Boolean); let line = '';
+    words.forEach(w=>{ const t = line ? line + ' ' + w : w; if(ctx.measureText(t).width <= maxW || !line){ line = t; } else { out.push(line); line = w; } });
+    if(line) out.push(line); else if(!words.length) out.push('');
+  });
+  return out;
+}
+function fitPara(ctx, text, family, maxW, maxH, maxSize, minSize, lh, weight){
+  let size = maxSize, lines = [];
+  for(; size >= minSize; size -= 0.1){ font(ctx, size, family, weight); lines = wrap(ctx, text, maxW); if(lines.length * size * lh <= maxH) return { size, lines, cut: false }; }
+  size = minSize; font(ctx, size, family, weight); lines = wrap(ctx, text, maxW);
+  const max = Math.max(1, Math.floor(maxH / (size * lh)));
+  if(lines.length > max){ lines = lines.slice(0, max); let l = lines[max - 1]; while(l && ctx.measureText(l + '…').width > maxW) l = l.slice(0, -1); lines[max - 1] = l.replace(/\s+\S*$/, '') + '…'; return { size, lines, cut: true }; }
+  return { size, lines, cut: false };
+}
+function fitLine(ctx, text, family, maxW, maxSize, minSize, weight){ let s = maxSize; for(; s > minSize; s -= 0.1){ font(ctx, s, family, weight); if(ctx.measureText(text).width <= maxW) break; } font(ctx, s, family, weight); return s; }
+function lines(ctx, ls, x, y, size, lh, align){ ctx.textAlign = align || 'left'; ctx.textBaseline = 'top'; ls.forEach((l, i)=>ctx.fillText(l, x, y + i * size * lh)); }
+function shadow(ctx, on, k){ if(on){ ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 0.8 * (k || 1); ctx.shadowOffsetY = 0.15 * (k || 1); } else { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0; } }
+function rr(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+/* ---------- Loghi: dalla libreria oppure etichetta neutra ---------- */
+let LOGOS = [];
+function logoOf(type){ const l = LOGOS.find(x=>x.type === type); return l ? img(l.data) : null; }
+function logoBox(ctx, type, h, maxW, color, short){   // misura e restituisce il disegno del logo
+  const im = logoOf(type);
+  if(im){ let w = h * imgW(im) / imgH(im), hh = h; if(w > maxW){ w = maxW; hh = w * imgH(im) / imgW(im); }
+    return { w, draw: (x, y) => ctx.drawImage(im, x, y + (h - hh) / 2, w, hh) }; }
+  const text = (short ? BADGE_SHORT[type] : BADGE[type]) || lbl(FEATS, type) || type, size = h * 0.5;
+  font(ctx, size, 'Segoe UI', 700); let tw = ctx.measureText(text).width, pad = h * 0.32;
+  let s = size; while(tw + pad * 2 > maxW && s > h * 0.25){ s -= h * 0.03; font(ctx, s, 'Segoe UI', 700); tw = ctx.measureText(text).width; }
+  const w = Math.min(maxW, tw + pad * 2);
+  return { w, draw: (x, y) => { ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = h * 0.07; rr(ctx, x + 0.2, y + 0.2, w - 0.4, h - 0.4, h * 0.18); ctx.stroke();
+    ctx.fillStyle = color; font(ctx, s, 'Segoe UI', 700); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, x + w / 2, y + h / 2 + h * 0.03); ctx.restore(); } };
+}
+function logoRow(ctx, types, cx, y, h, maxW, color, gap){
+  const boxes = types.map(t=>logoBox(ctx, t, h, maxW / Math.max(1, types.length) * 1.6, color));
+  let tot = boxes.reduce((s, b)=>s + b.w, 0) + gap * (boxes.length - 1), sc = tot > maxW ? maxW / tot : 1;
+  if(sc < 1){ return logoRow(ctx, types, cx, y + h * (1 - sc) / 2, h * sc, maxW, color, gap * sc); }
+  let x = cx - tot / 2; boxes.forEach(b=>{ b.draw(x, y); x += b.w + gap; });
+  return tot;
+}
+
+/* ---------- Codice a barre EAN-13 ---------- */
+const EAN_L = ['0001101', '0011001', '0010011', '0111101', '0100011', '0110001', '0101111', '0111011', '0110111', '0001011'];
+const EAN_G = ['0100111', '0110011', '0011011', '0100001', '0011101', '0111001', '0000101', '0010001', '0001001', '0010111'];
+const EAN_R = ['1110010', '1100110', '1101100', '1000010', '1011100', '1001110', '1010000', '1000100', '1001000', '1110100'];
+const EAN_P = ['LLLLLL', 'LLGLGG', 'LLGGLG', 'LLGGGL', 'LGLLGG', 'LGGLLG', 'LGGGLL', 'LGLGLG', 'LGLGGL', 'LGGLGL'];
+function eanCheck(d12){ let s = 0; for(let i = 0; i < 12; i++) s += +d12[i] * (i % 2 ? 3 : 1); return (10 - s % 10) % 10; }
+function eanValid(code){ const d = String(code || '').replace(/\D/g, ''); if(d.length === 12) return '0' + d; return d.length === 13 && eanCheck(d) === +d[12] ? d : ''; }   // UPC-A (12 cifre) = EAN-13 con uno zero davanti
+function eanBits(d){
+  let bits = '101'; const p = EAN_P[+d[0]];
+  for(let i = 1; i <= 6; i++) bits += (p[i - 1] === 'L' ? EAN_L : EAN_G)[+d[i]];
+  bits += '01010'; for(let i = 7; i <= 12; i++) bits += EAN_R[+d[i]]; return bits + '101';
+}
+function drawEan(ctx, code, x, y, w, h){
+  const d = eanValid(code); if(!d) return false;
+  ctx.save(); ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x, y, w, h);
+  const quiet = w * 0.1, m = (w - quiet * 2) / 95, bits = eanBits(d), barH = h * 0.74, top = y + h * 0.07;
+  ctx.fillStyle = '#000000';
+  for(let i = 0; i < 95; i++) if(bits[i] === '1'){ const guard = i < 3 || (i >= 45 && i < 50) || i >= 92; ctx.fillRect(x + quiet + i * m, top, m * 1.02, barH + (guard ? h * 0.06 : 0)); }
+  font(ctx, h * 0.13, 'Arial', 400); ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+  ctx.fillText(d[0], x + quiet * 0.5, top + barH + h * 0.01);
+  ctx.fillText(d.slice(1, 7), x + quiet + m * 24, top + barH + h * 0.01); ctx.fillText(d.slice(7), x + quiet + m * 71, top + barH + h * 0.01);
+  ctx.restore(); return true;
+}
+
+/* ---------- La copertina intera ---------- */
+function frontArea(P){   // l'immagine del fronte comincia sotto la fascia del formato, come sulle custodie vere
+  const G = geom(P), F = FORMATS[P.format] || FORMATS.bd, bandH = F.color && P.dims.band > 0 ? P.dims.band : 0, y = bandH ? G.b + bandH : 0;
+  return { x: G.xF, y, w: G.w - G.xF, h: G.h - y };
+}
+function geom(P){ const D = P.dims, b = BLEED, W = 2 * D.P + D.S; return { D, b, W, w: W + 2 * b, h: D.H + 2 * b, xS: b + D.P, xF: b + D.P + D.S, xE: b + W }; }
+function render(ctx, P, k, opt){
+  opt = opt || {};
+  const G = geom(P), { D, b, w, h, xS, xF } = G, F = FORMATS[P.format] || FORMATS.bd, st = P.style;
+  const fi = img(P.img.front), pal = palette(fi), color = st.colorMode === 'custom' ? st.textColor : (P.img.backMode === 'color' && pal.lum > 0.75 ? '#151515' : '#FFFFFF');
+  const darkText = color === '#151515';
+  ctx.save(); ctx.scale(k, k);
+  // --- sfondo di retro e dorso ---
+  ctx.fillStyle = pal.dark; ctx.fillRect(0, 0, w, h);
+  const mode = P.img.backMode, bi = img(P.img.back);
+  if(fi && (mode === 'blur' || mode === 'mirror' || (mode === 'image' && !bi))) drawBlur(ctx, fi, 0, 0, xF, h);
+  if(fi && mode === 'mirror'){ ctx.save(); ctx.translate(xS, 0); ctx.scale(-1, 1); drawCover(ctx, fi, 0, 0, xS, h, P.img.zoom, -(P.img.ox || 0), P.img.oy); ctx.restore(); }
+  if(mode === 'image' && bi) drawCover(ctx, bi, 0, 0, xS, h);
+  if(mode === 'color'){ const g = ctx.createLinearGradient(0, 0, 0, h); g.addColorStop(0, pal.avg); g.addColorStop(1, pal.dark); ctx.fillStyle = g; ctx.fillRect(0, 0, xF, h); }
+  if(mode !== 'color'){ ctx.fillStyle = mode === 'image' ? 'rgba(0,0,0,.30)' : 'rgba(0,0,0,.42)'; ctx.fillRect(0, 0, xF, h); }
+  if(st.preset === 'minimal'){ ctx.fillStyle = pal.dark; ctx.fillRect(0, 0, xS, h); }
+  // --- dorso ---
+  const si = img(P.img.spine);
+  if(si) drawCover(ctx, si, xS, 0, D.S, h);
+  else { ctx.fillStyle = 'rgba(0,0,0,.28)'; ctx.fillRect(xS, 0, D.S, h); }
+  // --- fronte ---
+  const FA = frontArea(P);
+  if(fi && P.img.fit === 'contain'){ drawBlur(ctx, fi, FA.x, FA.y, FA.w, FA.h); ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(FA.x, FA.y, FA.w, FA.h);
+    const r = containRect(fi, FA.x, FA.y, FA.w, FA.h, P.img.zoom, P.img.ox, P.img.oy); ctx.save(); ctx.beginPath(); ctx.rect(FA.x, FA.y, FA.w, FA.h); ctx.clip();
+    ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 3 * k; ctx.drawImage(fi, r.dx, r.dy, r.dw, r.dh); ctx.restore(); }
+  else if(fi) drawCover(ctx, fi, FA.x, FA.y, FA.w, FA.h, P.img.zoom, P.img.ox, P.img.oy);
+  else { ctx.fillStyle = '#4A4D55'; ctx.fillRect(xF, 0, w - xF, h); ctx.fillStyle = '#C9C6C0'; font(ctx, 4.2, 'Segoe UI', 600); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('Carica l\'immagine del fronte', xF + D.P / 2, b + D.H / 2); }
+  // --- fascia del formato ---
+  const bandH = F.color && D.band > 0 ? D.band : 0;
+  if(bandH){
+    ctx.fillStyle = F.color; ctx.fillRect(xF, 0, w - xF, b + bandH); ctx.fillRect(xS, 0, D.S, b + bandH); if(st.backBand) ctx.fillRect(0, 0, xS, b + bandH);
+    const lh = bandH * 0.56, main = logoBox(ctx, F.logo, lh, D.P * (F.second ? 0.55 : 0.72), '#FFFFFF');
+    if(F.second){ const sec = logoBox(ctx, F.second, lh * 0.62, D.P * 0.3, '#FFFFFF'), gap = 3, tot = main.w + gap + sec.w, x0 = xF + D.P / 2 - tot / 2;
+      main.draw(x0, b + (bandH - lh) / 2); sec.draw(x0 + main.w + gap, b + (bandH - lh * 0.62) / 2); }
+    else main.draw(xF + D.P / 2 - main.w / 2, b + (bandH - lh) / 2);
+    const sl = logoBox(ctx, F.logo, Math.min(bandH * 0.5, 6), D.S * 0.84, '#FFFFFF', true); sl.draw(xS + D.S / 2 - sl.w / 2, b + (bandH - Math.min(bandH * 0.5, 6)) / 2);
+    if(st.backBand){ const bl = logoBox(ctx, F.logo, lh * 0.8, D.P * 0.6, '#FFFFFF'); bl.draw(b + D.P / 2 - bl.w / 2, b + (bandH - lh * 0.8) / 2); }
+  } else { const sl = logoBox(ctx, F.logo, 4.5, D.S * 0.84, color, true); sl.draw(xS + D.S / 2 - sl.w / 2, b + 4); }
+  // --- nome dell'edizione e titolo sul fronte ---
+  let frontTop = b + bandH + 4;
+  if(P.ed.nome){ ctx.fillStyle = color; shadow(ctx, !darkText, 1); const s = fitLine(ctx, P.ed.nome, st.bodyFont, D.P - 14, 3.4, 2, 600); ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(P.ed.nome, xF + D.P / 2, frontTop); frontTop += s * 1.5; shadow(ctx, false); }
+  const feats = (P.ed.feat || []).filter(f=>FEATS.some(x=>x[0] === f));
+  const rowH = 6, rowTypes = (P.format === 'dvd' ? ['dvd'] : []).concat(feats);
+  const rowY = b + D.H - 5 - rowH, showRow = st.frontLogos && rowTypes.length;
+  if(showRow){ const g = ctx.createLinearGradient(0, rowY - 10, 0, h); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.55)'); ctx.fillStyle = g; ctx.fillRect(xF, rowY - 10, w - xF, h - rowY + 10); logoRow(ctx, rowTypes, xF + D.P / 2, rowY, rowH, D.P - 12, '#FFFFFF', 2.4); }
+  if(st.frontTitle && P.film.titolo){
+    ctx.fillStyle = color; shadow(ctx, !darkText, 1.6);
+    const s = fitLine(ctx, P.film.titolo, st.titleFont, D.P - 12, 13, 5, 700); ctx.textAlign = 'center'; ctx.textBaseline = st.frontTitlePos === 'top' ? 'top' : 'bottom';
+    ctx.fillText(P.film.titolo, xF + D.P / 2, st.frontTitlePos === 'top' ? frontTop + 1 : (showRow ? rowY - 3 : b + D.H - 7)); shadow(ctx, false);
+  }
+  // --- dorso: titolo, anno, numero, distributore ---
+  const studio = st.studioLogos ? logoOf('studio') : null;
+  const numD = P.film.numero ? Math.min(D.S - 3, 9) : 0, studioH = studio ? Math.min(8, D.S * 0.62) : 0;
+  const yTop = b + (bandH || 10) + 2.5, yBot = b + D.H - 3 - (numD ? numD + 2 : 0) - (studioH ? studioH + 2 : 0);
+  if(P.film.titolo){
+    const L = yBot - yTop, title = P.film.titolo, year = P.film.anno ? String(P.film.anno) : '';
+    ctx.save(); ctx.translate(xS + D.S / 2, yTop + L / 2); ctx.rotate(st.spineDir === 'tb' ? Math.PI / 2 : -Math.PI / 2);
+    let ts = Math.min(D.S * 0.52, 8), ys = ts * 0.62;
+    for(;; ts -= 0.1){ ys = ts * 0.62; font(ctx, ts, st.titleFont, 700); const tw = ctx.measureText(title).width; font(ctx, ys, st.bodyFont, 400); const yw = year ? ctx.measureText(year).width + ts * 0.6 : 0; if(tw + yw <= L - 2 || ts < 2.2) break; }
+    font(ctx, ts, st.titleFont, 700); const tw = ctx.measureText(title).width; font(ctx, ys, st.bodyFont, 400); const yw = year ? ctx.measureText(year).width : 0, gap = year ? ts * 0.6 : 0, x0 = -(tw + gap + yw) / 2;
+    ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; font(ctx, ts, st.titleFont, 700); ctx.fillText(title, x0, 0.2);
+    if(year){ font(ctx, ys, st.bodyFont, 400); ctx.globalAlpha = 0.85; ctx.fillText(year, x0 + tw + gap, 0.2); }
+    ctx.restore();
+  }
+  if(studio){ const sh = studioH, sw = Math.min(D.S * 0.8, sh * imgW(studio) / imgH(studio)), hh = sw * imgH(studio) / imgW(studio); ctx.drawImage(studio, xS + (D.S - sw) / 2, yBot + 2 + (sh - hh) / 2, sw, hh); }
+  if(numD){ const cy = b + D.H - 3 - numD / 2, cx = xS + D.S / 2; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(cx, cy, numD / 2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = darkText ? '#FFFFFF' : '#111111'; const ns = fitLine(ctx, String(P.film.numero), st.titleFont, numD * 0.78, numD * 0.55, 1.5, 700); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(P.film.numero), cx, cy + ns * 0.04); }
+  // --- retro ---
+  renderBack(ctx, P, G, color, darkText, bandH);
+  // --- guide ---
+  if(opt.guides){
+    ctx.fillStyle = 'rgba(255,255,255,.22)'; ctx.fillRect(0, 0, w, b); ctx.fillRect(0, h - b, w, b); ctx.fillRect(0, b, b, h - 2 * b); ctx.fillRect(w - b, b, b, h - 2 * b);
+    ctx.lineWidth = 0.3; ctx.strokeStyle = '#0FA3C9'; ctx.setLineDash([]); ctx.strokeRect(b, b, G.W, D.H);
+    ctx.setLineDash([1.6, 1.2]); [xS, xF].forEach(x=>{ ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); });
+    ctx.strokeStyle = '#F0388F'; ctx.lineWidth = 0.25; ctx.setLineDash([1, 1]); const m = 4;
+    ctx.strokeRect(b + m, b + m, D.P - 2 * m, D.H - 2 * m); ctx.strokeRect(xF + m, b + m, D.P - 2 * m, D.H - 2 * m); ctx.strokeRect(xS + 1.2, b + m, D.S - 2.4, D.H - 2 * m); ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+function renderBack(ctx, P, G, color, darkText, bandH){
+  const { D, b, xS } = G, st = P.style, f = P.film, ed = P.ed, m = 6;
+  const x0 = b + m, x1 = xS - m, aw = x1 - x0, yTop = b + m + (st.backBand ? bandH : 0), yBot = b + D.H - m, left = st.preset === 'moderno';
+  const cx = left ? x0 : x0 + aw / 2, al = left ? 'left' : 'center';
+  ctx.fillStyle = color; shadow(ctx, !darkText, 1);
+  // zona in basso: riquadro tecnico e codice a barre
+  const ean = eanValid(f.ean), bcW = ean ? 33 : 0, bcH = 19;
+  const specs = [f.durata ? `Durata: ${f.durata} minuti` : '', ed.video ? `Video: ${ed.video}` : '', ed.audio ? `Audio: ${ed.audio}` : '', ed.subs ? `Sottotitoli: ${ed.subs}` : '', ed.regione ? `Regione: ${ed.regione}` : '', ed.dischi ? `Dischi: ${ed.dischi}` : '', ed.extra ? `Contenuti speciali: ${ed.extra}` : ''].filter(Boolean);
+  const logos = st.backLogos ? (ed.feat || []).filter(x=>FEATS.some(y=>y[0] === x)) : [];
+  const boxW = aw - (ean ? bcW + 4 : 0);
+  let boxH = 0, specLines = [], ss = 2.35;
+  if(specs.length || logos.length){
+    font(ctx, ss, st.bodyFont, 400); specLines = specs.flatMap(s=>wrap(ctx, s, boxW - 4));
+    if(specLines.length > 9){ ss = 2.0; font(ctx, ss, st.bodyFont, 400); specLines = specs.flatMap(s=>wrap(ctx, s, boxW - 4)).slice(0, 10); }
+    boxH = specLines.length * ss * 1.3 + (logos.length ? 7.5 : 0) + 3.4;
+  }
+  const bottomH = Math.max(boxH, ean ? bcH : 0);
+  let y = yBot - bottomH;
+  if(boxH){
+    shadow(ctx, false); ctx.fillStyle = darkText ? 'rgba(255,255,255,.55)' : 'rgba(0,0,0,.42)'; rr(ctx, x0, yBot - boxH, boxW, boxH, 1.4); ctx.fill();
+    ctx.fillStyle = color; font(ctx, ss, st.bodyFont, 400); lines(ctx, specLines, x0 + 2, yBot - boxH + 1.7, ss, 1.3, 'left');
+    if(logos.length) logoRow(ctx, logos, x0 + boxW / 2, yBot - 6.6, 5, boxW - 6, color, 2);
+  }
+  if(ean){ shadow(ctx, false); drawEan(ctx, ean, x1 - bcW, yBot - bcH, bcW, bcH); }
+  // distributore e crediti in piccolo
+  const studio = st.studioLogos ? logoOf('studio') : null;
+  if(studio){ const hh = 5.5, ww = Math.min(aw * 0.3, hh * imgW(studio) / imgH(studio)); y -= hh + 2.5; ctx.drawImage(studio, cx - (left ? 0 : ww / 2), y, ww, ww * imgH(studio) / imgW(studio)); }
+  const credits = f.crediti || [f.regia ? 'Regia di ' + f.regia : '', f.cast ? 'Con ' + f.cast : ''].filter(Boolean).join('. ');
+  ctx.fillStyle = color; shadow(ctx, !darkText, 0.6);
+  if(credits){ font(ctx, 1.9, 'Arial Narrow', 400); const cl = wrap(ctx, credits, aw).slice(0, 4); y -= cl.length * 1.9 * 1.25 + 2.5; ctx.globalAlpha = 0.85; lines(ctx, cl, cx, y, 1.9, 1.25, al); ctx.globalAlpha = 1; }
+  // in alto: frase di lancio, fotogrammi, trama
+  let top = yTop;
+  if(f.tagline){ const t = fitPara(ctx, f.tagline, st.titleFont, aw, 16, 6, 3.4, 1.12, 700); font(ctx, t.size, st.titleFont, 700); lines(ctx, t.lines, cx, top, t.size, 1.12, al); top += t.lines.length * t.size * 1.12 + 3.5; }
+  const stills = (P.img.stills || []).map(img).filter(Boolean).slice(0, 3), synBottom = y - 3.5;
+  if(left && stills.length){   // impaginazione moderna: fotogrammi in colonna a destra
+    const sw = aw * 0.34, sh = sw * 9 / 16; let sy = top; shadow(ctx, false);
+    stills.forEach(s=>{ if(sy + sh <= synBottom){ drawCover(ctx, s, x1 - sw, sy, sw, sh); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 0.25; ctx.strokeRect(x1 - sw, sy, sw, sh); sy += sh + 2.5; } });
+    shadow(ctx, !darkText, 1); ctx.fillStyle = color;
+    if(f.trama){ const p = fitPara(ctx, f.trama, st.bodyFont, aw * 0.62, synBottom - top, 3.3, 2.1, 1.34); font(ctx, p.size, st.bodyFont, 400); lines(ctx, p.lines, x0, top, p.size, 1.34, 'left'); }
+  } else {
+    if(stills.length && st.preset !== 'minimal'){ const gap = 2.5, sw = (aw - gap * (stills.length - 1)) / stills.length, sh = Math.min(sw * 9 / 16, 26); shadow(ctx, false);
+      stills.forEach((s, i)=>{ const sx = x0 + i * (sw + gap); drawCover(ctx, s, sx, top, sw, sh); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 0.25; ctx.strokeRect(sx, top, sw, sh); });
+      top += sh + 4; shadow(ctx, !darkText, 1); ctx.fillStyle = color; }
+    if(f.trama && synBottom - top > 6){ const p = fitPara(ctx, f.trama, st.bodyFont, aw, synBottom - top, 3.3, 2.1, 1.34); font(ctx, p.size, st.bodyFont, 400);
+      const free = synBottom - top - p.lines.length * p.size * 1.34, ty = st.preset === 'minimal' ? top + free / 2 : top + Math.max(0, free) * 0.32; lines(ctx, p.lines, cx, ty, p.size, 1.34, al); }
+  }
+  shadow(ctx, false);
+}
+
+/* =====================================================================
+   Interfaccia, archivio, Videoteca, loghi, esportazioni
+   ===================================================================== */
+let P = newProject();
+let _tT; function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('show'); clearTimeout(_tT); _tT = setTimeout(()=>el.classList.remove('show'), 3600); }
+let _undoFn = null, _undoT = null;
+function showUndo(msg, fn){ _undoFn = fn; $('undoMsg').textContent = msg; $('undoBar').classList.remove('hidden'); clearTimeout(_undoT); _undoT = setTimeout(()=>{ $('undoBar').classList.add('hidden'); _undoFn = null; }, 9000); }
+$('undoBtn').addEventListener('click', ()=>{ const f = _undoFn; $('undoBar').classList.add('hidden'); _undoFn = null; if(f) f(); });
+
+/* ---------- Archivio sul dispositivo ---------- */
+let _db = null;
+function db(){ if(_db) return _db; _db = new Promise(res=>{ try{ const r = indexedDB.open('officina-copertine', 1);
+  r.onupgradeneeded = () => { r.result.createObjectStore('projects', { keyPath: 'id' }); r.result.createObjectStore('logos', { keyPath: 'id' }); };
+  r.onsuccess = () => res(r.result); r.onerror = () => res(null); }catch(e){ res(null); } }); return _db; }
+async function dbAll(store){ const d = await db(); if(!d) return []; return new Promise(res=>{ try{ const q = d.transaction(store, 'readonly').objectStore(store).getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => res([]); }catch(e){ res([]); } }); }
+async function dbPut(store, v){ const d = await db(); if(!d) return false; return new Promise(res=>{ try{ const tx = d.transaction(store, 'readwrite'); tx.objectStore(store).put(v); tx.oncomplete = () => res(true); tx.onerror = () => res(false); }catch(e){ res(false); } }); }
+async function dbDel(store, id){ const d = await db(); if(!d) return; return new Promise(res=>{ try{ const tx = d.transaction(store, 'readwrite'); tx.objectStore(store).delete(id); tx.oncomplete = () => res(true); tx.onerror = () => res(false); }catch(e){ res(false); } }); }
+let _saveT = null;
+function scheduleSave(){ clearTimeout(_saveT); _saveT = setTimeout(saveNow, 700); }
+async function saveNow(){
+  P.updated = Date.now(); P.name = $('pname').value.trim() || P.film.titolo || 'Copertina senza titolo';
+  try{ const G = geom(P), k = 1.5, c = mkCanvas(G.w * k, G.h * k); render(c.getContext('2d'), P, k, {}); P.thumb = c.toDataURL('image/jpeg', 0.7); }catch(e){}
+  const ok = await dbPut('projects', JSON.parse(JSON.stringify(P)));
+  try{ localStorage.setItem('oc-last', P.id); }catch(e){}
+  $('saved').textContent = ok ? 'Salvato alle ' + new Date().toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) : 'Salvataggio non riuscito: scarica il PDF per non perdere il lavoro';
+}
+
+/* ---------- Collegamento dei campi ---------- */
+const getPath = (o, p) => p.split('.').reduce((a, k)=>a == null ? a : a[k], o);
+function setPath(o, p, v){ const ks = p.split('.'), last = ks.pop(); const t = ks.reduce((a, k)=>(a[k] = a[k] || {}), o); t[last] = v; }
+function fillSelects(){
+  $('format').innerHTML = Object.entries(FORMATS).map(([k, f])=>`<option value="${k}">${esc(f.name)}</option>`).join('');
+  $('logoType').innerHTML = LOGO_TYPES.map(([k, l])=>`<option value="${k}">${esc(l)}</option>`).join('');
+  $('titleFont').innerHTML = FONTS_TITLE.map(f=>`<option>${esc(f)}</option>`).join('');
+  $('bodyFont').innerHTML = FONTS_BODY.map(f=>`<option>${esc(f)}</option>`).join('');
+  $('feats').innerHTML = FEATS.map(([k, l])=>`<label class="chk"><input type="checkbox" data-feat="${k}"> ${esc(l)}</label>`).join('');
+}
+function toUI(){
+  document.querySelectorAll('[data-bind]').forEach(el=>{ const v = getPath(P, el.dataset.bind); if(el.type === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v; });
+  document.querySelectorAll('[data-feat]').forEach(el=>{ el.checked = (P.ed.feat || []).includes(el.dataset.feat); });
+  $('pname').value = P.name && P.name !== P.film.titolo ? P.name : '';
+  renderThumbs(); renderStatus();
+}
+document.addEventListener('input', e=>{
+  const el = e.target;
+  if(el.dataset.bind){ setPath(P, el.dataset.bind, el.type === 'checkbox' ? el.checked : (el.dataset.num !== undefined ? parseFloat(el.value) || 0 : el.value)); changed(); }
+  else if(el.dataset.feat){ const f = new Set(P.ed.feat || []); el.checked ? f.add(el.dataset.feat) : f.delete(el.dataset.feat); P.ed.feat = FEATS.map(x=>x[0]).filter(k=>f.has(k)); changed(); }
+  else if(el.id === 'pname') scheduleSave();
+});
+document.addEventListener('change', e=>{ if(e.target.type === 'checkbox' && (e.target.dataset.bind || e.target.dataset.feat)) e.target.dispatchEvent(new Event('input', { bubbles: true })); });
+$('format').addEventListener('change', ()=>{ P.format = $('format').value; applyStd(); toast('Misure standard per ' + FORMATS[P.format].name + ': controllale con la tua custodia'); });
+function applyStd(){ const f = FORMATS[P.format]; P.dims = { H: f.H, P: f.P, S: f.S, band: f.band }; toUI(); changed(); }
+$('stdDims').addEventListener('click', applyStd);
+function changed(){ renderStatus(); draw(); scheduleSave(); }
+function renderStatus(){
+  const G = geom(P), mm = v => String(Math.round(v * 10) / 10).replace('.', ',');
+  $('dimNote').textContent = `Inserto: ${mm(G.W)} × ${mm(P.dims.H)} mm (${mm(P.dims.P)} + ${mm(P.dims.S)} + ${mm(P.dims.P)}); con l'abbondanza ${mm(G.w)} × ${mm(G.h)} mm.`;
+  $('st-format').textContent = FORMATS[P.format].name;
+  $('st-film').textContent = P.film.titolo ? P.film.titolo.slice(0, 22) : '';
+  $('st-ed').textContent = (P.ed.feat || []).length ? P.ed.feat.length + ' caratteristiche' : '';
+  $('st-img').textContent = P.img.front ? 'fronte caricato' : 'manca il fronte';
+  $('st-logo').textContent = LOGOS.length ? LOGOS.length + ' in libreria' : 'nessuno';
+  const d = String(P.film.ean || '').replace(/\D/g, '');
+  $('eanNote').textContent = !d ? '' : eanValid(d) ? 'Codice a barre valido: comparirà sul retro.' : 'Il codice non è un EAN valido (13 cifre, oppure 12 per i codici UPC): controlla le cifre.';
+  $('eanNote').style.color = !d || eanValid(d) ? '' : 'var(--warn)';
+  const fi = img(P.img.front), res = $('res-front');
+  if(fi){ const FA = frontArea(P), r = fitRect(P, fi, FA, 0, 0), dpi = Math.round(25.4 / r.s);
+    res.textContent = `${dpi} dpi alla stampa: ` + (dpi >= 250 ? 'nitida' : dpi >= 150 ? 'accettabile, ma meglio un\'immagine più grande' : 'troppo piccola, verrà sgranata'); res.className = 'res ' + (dpi >= 250 ? 'ok' : dpi >= 150 ? 'warn' : 'bad'); }
+  else { res.textContent = ''; }
+}
+
+/* ---------- Anteprima ---------- */
+let _raf = 0, _view = { k: 1 };
+function draw(){ cancelAnimationFrame(_raf); _raf = requestAnimationFrame(drawNow); }
+function drawNow(){
+  const cv = $('preview'), G = geom(P), stage = cv.parentElement, avail = Math.max(320, Math.min(1300, (stage.clientWidth || 1000) - 44));
+  const dpr = Math.min(2, window.devicePixelRatio || 1), cssW = avail, k = cssW / G.w;
+  cv.style.width = cssW + 'px'; cv.style.height = (G.h * k) + 'px'; cv.width = Math.round(cssW * dpr); cv.height = Math.round(G.h * k * dpr);
+  const ctx = cv.getContext('2d'); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height);
+  render(ctx, P, k * dpr, { guides: $('guides').checked }); _view = { k };
+  $('panels').innerHTML = `<span style="width:${(BLEED + P.dims.P) * k}px; text-align:center">Retro</span><span style="width:${P.dims.S * k}px; text-align:center">Dorso</span><span style="width:${(P.dims.P + BLEED) * k}px; text-align:center">Fronte</span>`;
+  renderStatus();
+}
+_onImg = () => { draw(); renderThumbs(); };
+window.addEventListener('resize', draw);
+$('guides').addEventListener('change', draw);
+// trascinare l'immagine del fronte
+let _drag = null;
+const mmAt = e => { const r = $('preview').getBoundingClientRect(); return { x: (e.clientX - r.left) / _view.k, y: (e.clientY - r.top) / _view.k }; };
+$('preview').addEventListener('pointermove', e=>{ const G = geom(P), p = mmAt(e); if(_drag){ const fi = img(P.img.front); if(!fi) return;
+    const nx = _drag.ox + (p.x - _drag.x), ny = _drag.oy + (p.y - _drag.y), area = frontArea(P);
+    const r0 = fitRect(P, fi, area, 0, 0), r = fitRect(P, fi, area, nx, ny);
+    P.img.ox = r.dx - r0.dx; P.img.oy = r.dy - r0.dy; draw(); return; }
+  $('preview').classList.toggle('grab', p.x >= G.xF && !!P.img.front); });
+$('preview').addEventListener('pointerdown', e=>{ const G = geom(P), p = mmAt(e); if(p.x < G.xF || !P.img.front) return; _drag = { x: p.x, y: p.y, ox: P.img.ox || 0, oy: P.img.oy || 0 }; $('preview').classList.add('grabbing'); try{ $('preview').setPointerCapture(e.pointerId); }catch(err){} });
+const endDrag = () => { if(_drag){ _drag = null; $('preview').classList.remove('grabbing'); scheduleSave(); } };
+$('preview').addEventListener('pointerup', endDrag); $('preview').addEventListener('pointercancel', endDrag);
+$('centerImg').addEventListener('click', ()=>{ P.img.ox = 0; P.img.oy = 0; P.img.zoom = 1; toUI(); changed(); });
+
+/* ---------- Immagini ---------- */
+let _imgTarget = 'front';
+function fileText(f){ return f.text ? f.text() : new Promise((res, rej)=>{ const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsText(f); }); }
+function readAsDataURL(file){ return new Promise((res, rej)=>{ const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
+function loadImage(src){ return new Promise((res, rej)=>{ const im = new Image(); if(/^https?:/.test(src)) im.crossOrigin = 'anonymous'; im.onload = () => res(im); im.onerror = () => rej(new Error('img')); im.src = src; }); }
+async function prepImage(src){   // le immagini enormi si riducono a 6000 px: bastano per la stampa e pesano meno
+  const im = await loadImage(src), max = 6000, W = imgW(im), H = imgH(im);
+  if(/^data:/.test(src) && Math.max(W, H) <= max) return src;
+  const s = Math.min(1, max / Math.max(W, H)), c = mkCanvas(W * s, H * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.93);
+}
+async function setImage(target, file){
+  if(!file || !/^image\//.test(file.type)){ toast('Questo file non è un\'immagine'); return; }
+  let src; try{ src = await prepImage(await readAsDataURL(file)); }catch(e){ toast('Non riesco a leggere questa immagine'); return; }
+  if(target === 'still'){ P.img.stills = (P.img.stills || []).concat(src).slice(0, 3); }
+  else { P.img[target] = src; if(target === 'front'){ P.img.ox = 0; P.img.oy = 0; P.img.zoom = 1; } if(target === 'back') P.img.backMode = 'image'; }
+  toUI(); changed();
+  if(target === 'front' && (P.img.fit || 'cover') === 'cover'){ try{ const im = await loadImage(src), A = frontArea(P), r = (imgW(im) / imgH(im)) / (A.w / A.h);
+    if(r < 0.8 || r > 1.25) toast(`L'immagine è più ${r < 1 ? 'stretta' : 'larga'} del fronte e verrà ritagliata: se vuoi vederla tutta, scegli "Immagine intera" in Adattamento del fronte`); }catch(e){} }
+}
+document.querySelectorAll('[data-drop]').forEach(d=>{
+  const open = () => { _imgTarget = d.dataset.drop; $('imgIn').click(); };
+  d.addEventListener('click', open); d.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); } });
+  d.addEventListener('dragover', e=>{ e.preventDefault(); d.classList.add('over'); }); d.addEventListener('dragleave', ()=>d.classList.remove('over'));
+  d.addEventListener('drop', e=>{ e.preventDefault(); d.classList.remove('over'); const f = e.dataTransfer.files && e.dataTransfer.files[0]; if(f) setImage(d.dataset.drop, f); });
+});
+$('imgIn').addEventListener('change', e=>{ const f = e.target.files[0]; e.target.value = ''; if(f) setImage(_imgTarget, f); });
+function renderThumbs(){
+  ['front', 'back', 'spine'].forEach(t=>{ $('th-' + t).style.backgroundImage = P.img[t] ? `url("${P.img[t]}")` : ''; });
+  $('stills').innerHTML = (P.img.stills || []).map((s, i)=>`<span class="still" style="background-image:url('${s}')"><button type="button" data-still="${i}" aria-label="Togli il fotogramma">×</button></span>`).join('');
+}
+$('stills').addEventListener('click', e=>{ const b = e.target.closest('[data-still]'); if(!b) return; P.img.stills.splice(+b.dataset.still, 1); renderThumbs(); changed(); });
+
+/* ---------- Libreria dei loghi ---------- */
+async function rasterSvg(file){   // SVG → PNG ad alta risoluzione: alcuni browser disegnano male gli SVG senza dimensioni
+  let txt = await fileText(file); const vb = txt.match(/viewBox\s*=\s*["']\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)/i);
+  const vw = vb ? parseFloat(vb[1]) : 300, vh = vb ? parseFloat(vb[2]) : 100;
+  if(!/<svg[^>]*\swidth=/i.test(txt)) txt = txt.replace(/<svg/i, `<svg width="${vw}" height="${vh}"`);
+  const im = await loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(txt)), H = 400, W = Math.round(H * (imgW(im) / imgH(im) || vw / vh));
+  const c = mkCanvas(W, H); c.getContext('2d').drawImage(im, 0, 0, W, H); return c.toDataURL('image/png');
+}
+async function addLogo(file){
+  const type = $('logoType').value;
+  try{ const data = /svg/.test(file.type) || /\.svg$/i.test(file.name) ? await rasterSvg(file) : await readAsDataURL(file);
+    const old = LOGOS.find(l=>l.type === type); if(old){ await dbDel('logos', old.id); LOGOS = LOGOS.filter(l=>l !== old); }
+    const l = { id: uid(), type, name: file.name, data }; LOGOS.push(l); await dbPut('logos', l); renderLogos(); draw(); toast(`Logo "${lbl(LOGO_TYPES, type)}" aggiunto alla libreria`); }
+  catch(e){ toast('Non riesco a leggere questo logo: usa un PNG trasparente o un SVG'); }
+}
+function renderLogos(){
+  $('logos').innerHTML = LOGOS.length ? LOGO_TYPES.filter(([k])=>LOGOS.some(l=>l.type === k)).map(([k, t])=>{ const l = LOGOS.find(x=>x.type === k);
+    return `<div class="logo"><span class="lt" style="background-image:url('${l.data}')"></span><span style="min-width:0"><b>${esc(t)}</b><span>${esc(l.name)}</span></span><button type="button" class="btn small" data-dellogo="${esc(l.id)}">Togli</button></div>`; }).join('')
+    : `<p class="note">La libreria è vuota: le copertine useranno etichette neutre.</p>`;
+  renderStatus();
+}
+$('addLogo').addEventListener('click', ()=>$('logoIn').click());
+$('logoIn').addEventListener('change', e=>{ const f = e.target.files[0]; e.target.value = ''; if(f) addLogo(f); });
+$('logos').addEventListener('click', async e=>{ const b = e.target.closest('[data-dellogo]'); if(!b) return; await dbDel('logos', b.dataset.dellogo); LOGOS = LOGOS.filter(l=>l.id !== b.dataset.dellogo); renderLogos(); draw(); });
+
+/* ---------- Dalla Videoteca ---------- */
+let _films = [];
+$('importBtn').addEventListener('click', ()=>$('importIn').click());
+$('importIn').addEventListener('change', async e=>{
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{ const j = JSON.parse(await fileText(f)); _films = Array.isArray(j) ? j : (j.movies || (j.data && j.data.movies) || j.films || []);
+    if(!_films.length) throw new Error('vuoto');
+    $('filmQ').value = ''; renderFilms(); $('filmDlg').showModal(); }
+  catch(err){ toast('Questo file non è un backup della Videoteca: scaricalo dalla Videoteca con "Scarica un backup"'); }
+});
+function renderFilms(){
+  const q = norm($('filmQ').value);
+  const list = _films.filter(m=>m && m.titolo && (!q || norm([m.titolo, m.regista, m.anno].join(' ')).includes(q))).sort((a, b)=>String(a.titolo).localeCompare(String(b.titolo), 'it')).slice(0, 300);
+  $('films').innerHTML = list.length ? list.map(m=>`<button type="button" class="film" data-film="${esc(_films.indexOf(m))}">${m.poster ? `<img src="${esc(m.poster)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<span></span>'}<span style="min-width:0"><b>${esc(m.titolo)}</b><span>${esc([m.anno, m.regista, m.formato].filter(Boolean).join(', '))}</span></span><span class="note">${esc(m.edizione || '')}</span></button>`).join('')
+    : `<p class="note">Nessun film corrisponde alla ricerca.</p>`;
+}
+$('filmQ').addEventListener('input', renderFilms);
+function featsFrom(text){
+  const t = String(text || ''), out = [];
+  if(/dolby\s*vision|\bDV\b/i.test(t)) out.push('dolbyvision');
+  if(/hdr\s*10\s*\+|hdr10plus/i.test(t)) out.push('hdr10plus');
+  if(/hdr\s*10(?!\s*\+)|\bHDR\b(?!\s*10\s*\+)/i.test(t)) out.push('hdr10');
+  if(/atmos/i.test(t)) out.push('atmos');
+  if(/dts\s*:?\s*x\b/i.test(t)) out.push('dtsx');
+  if(/dts[\s-]*hd/i.test(t)) out.push('dtshdma');
+  if(/imax/i.test(t)) out.push('imax');
+  if(/dolby\s*digital|\bAC-?3\b/i.test(t)) out.push('dd');
+  return FEATS.map(x=>x[0]).filter(k=>out.includes(k));
+}
+function formatFrom(s){ s = String(s || ''); if(/4k|uhd/i.test(s) && /blu/i.test(s) && /\+|combo|\be\b/i.test(s)) return 'combo'; if(/4k|uhd/i.test(s)) return 'uhd'; if(/blu/i.test(s)) return 'bd'; if(/dvd/i.test(s)) return 'dvd'; return ''; }
+async function applyFilm(m){
+  const fmt = formatFrom(m.formato) || P.format;
+  if(fmt !== P.format){ P.format = fmt; const f = FORMATS[fmt]; P.dims = { H: f.H, P: f.P, S: f.S, band: f.band }; }
+  const castList = String(m.cast || '').split(/\s*,\s*/).filter(Boolean).slice(0, 5).join(', ');
+  Object.assign(P.film, { titolo: m.titolo || '', anno: m.anno ? String(m.anno) : '', durata: String(m.durata || '').replace(/[^\d]/g, ''), regia: m.regista || '', cast: castList, trama: m.trama || '',
+    ean: String(m.barcode || '').replace(/\D/g, ''), numero: m.numero_film ? String(m.numero_film) : P.film.numero });
+  Object.assign(P.ed, { nome: m.edizione || '', video: m.qvideo || '', audio: m.audio || '', subs: m.sottotitoli || '', regione: m.regione && m.regione !== 'free' ? m.regione : (m.regione === 'free' ? 'Tutte le regioni' : ''), dischi: m.dischi ? String(m.dischi) : '',
+    extra: Array.isArray(m.contenutiExtra) ? m.contenutiExtra.join(', ') : (m.contenutiExtra || ''), feat: featsFrom([m.qvideo, m.qaudio, m.audio, m.edizione, m.formato].join(' ')) });
+  $('filmDlg').close(); toUI(); changed();
+  if(m.poster && !P.img.front){
+    const big = String(m.poster).replace(/(image\.tmdb\.org\/t\/p\/)w\d+\//, '$1original/');   // da TMDB: la versione originale, adatta alla stampa
+    try{ P.img.front = await prepImage(big); P.img.ox = 0; P.img.oy = 0; P.img.zoom = 1; toUI(); changed(); toast(`"${m.titolo}" caricato con la sua locandina: sostituiscila con un'immagine più grande per una stampa nitida`); }
+    catch(err){ toast(`"${m.titolo}" caricato. La locandina della Videoteca non si può usare direttamente: salvala e caricala in Immagini`); }
+  } else toast(`Dati di "${m.titolo}" caricati dalla Videoteca`);
+}
+$('films').addEventListener('click', e=>{ const b = e.target.closest('[data-film]'); if(b) applyFilm(_films[+b.dataset.film]); });
+
+/* ---------- PDF scritto a mano (nessuna libreria esterna) ---------- */
+const PT = 72 / 25.4;
+function b64bytes(dataUrl){ const s = atob(dataUrl.split(',')[1]); const u = new Uint8Array(s.length); for(let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+const ascii = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[–—]/g, '-').replace(/[^\x20-\x7e]/g, '').replace(/[()\\]/g, '');   // senza accenti, ma con le maiuscole
+function makePdf(pages){   // pages: [{ w, h (mm), images: [{ jpeg, pw, ph, x, y, w, h }], lines: [[x1,y1,x2,y2,width,dash]], texts: [[x,y,size,text]], trim }]
+  const enc = { encode: str => { const u = new Uint8Array(str.length); for(let i = 0; i < str.length; i++) u[i] = str.charCodeAt(i) & 255; return u; } }, chunks = [], offs = []; let len = 0;   // byte grezzi (latin1), come vuole il PDF
+  const add = d => { const u = typeof d === 'string' ? enc.encode(d) : d; chunks.push(u); len += u.length; };
+  const objs = []; const obj = body => { objs.push(body); return objs.length + 2; };   // 1 = catalogo, 2 = pagine
+  const pageIds = [], fontId = obj({ str: '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>' });
+  pages.forEach(pg=>{
+    const imgIds = pg.images.map(im=>obj({ str: `<< /Type /XObject /Subtype /Image /Width ${im.pw} /Height ${im.ph} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${im.jpeg.length} >>`, stream: im.jpeg }));
+    const H = pg.h * PT; let cs = '';
+    pg.images.forEach((im, i)=>{ cs += `q ${(im.w * PT).toFixed(3)} 0 0 ${(im.h * PT).toFixed(3)} ${(im.x * PT).toFixed(3)} ${(H - (im.y + im.h) * PT).toFixed(3)} cm /Im${i} Do Q\n`; });
+    (pg.lines || []).forEach(([x1, y1, x2, y2, wd, dash])=>{ cs += `${dash ? '[' + dash + '] 0 d' : '[] 0 d'} ${((wd || 0.25) * PT).toFixed(3)} w ${(x1 * PT).toFixed(3)} ${(H - y1 * PT).toFixed(3)} m ${(x2 * PT).toFixed(3)} ${(H - y2 * PT).toFixed(3)} l S\n`; });
+    (pg.texts || []).forEach(([x, y, size, t])=>{ cs += `BT /F1 ${size} Tf ${(x * PT).toFixed(3)} ${(H - y * PT).toFixed(3)} Td (${ascii(t)}) Tj ET\n`; });
+    const cId = obj({ str: `<< /Length ${enc.encode(cs).length} >>`, stream: enc.encode(cs) });
+    const box = `[0 0 ${(pg.w * PT).toFixed(3)} ${H.toFixed(3)}]`, trim = pg.trim ? ` /TrimBox [${pg.trim.map(v=>(v * PT).toFixed(3)).join(' ')}] /BleedBox ${box}` : '';
+    pageIds.push(obj({ str: `<< /Type /Page /Parent 2 0 R /MediaBox ${box}${trim} /Resources << /XObject << ${imgIds.map((id, i)=>`/Im${i} ${id} 0 R`).join(' ')} >> /Font << /F1 ${fontId} 0 R >> >> /Contents ${cId} 0 R >>` }));
+  });
+  add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  const all = [{ str: '<< /Type /Catalog /Pages 2 0 R >>' }, { str: `<< /Type /Pages /Kids [${pageIds.map(i=>i + ' 0 R').join(' ')}] /Count ${pageIds.length} >>` }, ...objs];
+  all.forEach((o, i)=>{ offs.push(len); add(`${i + 1} 0 obj\n${o.str}\n`); if(o.stream){ add('stream\n'); add(o.stream); add('\nendstream\n'); } add('endobj\n'); });
+  const xref = len; add(`xref\n0 ${all.length + 1}\n0000000000 65535 f \n` + offs.map(o=>String(o).padStart(10, '0') + ' 00000 n \n').join(''));
+  add(`trailer\n<< /Size ${all.length + 1} /Root 1 0 R /Info << /Producer (Officina delle Copertine) >> >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+async function ensureImages(p){
+  const srcs = [p.img.front, p.img.back, p.img.spine, ...(p.img.stills || []), ...LOGOS.map(l=>l.data)].filter(Boolean);
+  await Promise.all(srcs.map(s=>new Promise(res=>{ img(s); const e = IMG.get(s); if(e.ok || e.bad) return res(); const t = setInterval(()=>{ if(e.ok || e.bad){ clearInterval(t); res(); } }, 30); setTimeout(()=>{ clearInterval(t); res(); }, 8000); })));
+}
+function hiCanvas(p, dpi){ const G = geom(p), k = dpi / 25.4, c = mkCanvas(G.w * k, G.h * k); render(c.getContext('2d'), p, k, {}); return c; }
+function jpegOf(c){ return { jpeg: b64bytes(c.toDataURL('image/jpeg', 0.92)), pw: c.width, ph: c.height }; }
+function pageA4(p, c){   // A4 orizzontale, copertina a grandezza reale centrata, segni di taglio e di piega
+  const G = geom(p), x0 = (297 - G.w) / 2, y0 = (210 - G.h) / 2, b = G.b, t = { x: x0 + b, y: y0 + b, w: G.W, h: p.dims.H }, off = b + 1, L = 5, ls = [];
+  [[t.x, t.y], [t.x + t.w, t.y], [t.x, t.y + t.h], [t.x + t.w, t.y + t.h]].forEach(([x, y], i)=>{ const sx = i % 2 ? 1 : -1, sy = i < 2 ? -1 : 1;
+    ls.push([x + sx * off, y, x + sx * (off + L), y, 0.25]); ls.push([x, y + sy * off, x, y + sy * (off + L), 0.25]); });
+  [x0 + G.xS, x0 + G.xF].forEach(x=>{ ls.push([x, y0 - 1, x, y0 - 1 - L * 0.8, 0.25, '1 1']); ls.push([x, y0 + G.h + 1, x, y0 + G.h + 1 + L * 0.8, 0.25, '1 1']); });
+  return { w: 297, h: 210, images: [Object.assign(jpegOf(c), { x: x0, y: y0, w: G.w, h: G.h })], lines: ls,
+    texts: [[x0, Math.min(207, y0 + G.h + 8.5), 7, `${p.film.titolo || p.name || 'Copertina'} - ${FORMATS[p.format].name} - stampa al 100% (dimensioni effettive), taglia lungo i segni`]] };
+}
+function pagePro(p, c){ const G = geom(p); return { w: G.w, h: G.h, images: [Object.assign(jpegOf(c), { x: 0, y: 0, w: G.w, h: G.h })], trim: [G.b, G.b, G.b + G.W, G.b + p.dims.H] }; }
+function download(name, blob){ const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+const slug = p => (norm(p.film.titolo || p.name || 'copertina').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'copertina');
+async function exportPdf(kind, list){
+  list = list || [P]; toast('Preparo il PDF…');
+  const pages = [];
+  for(const p of list){ await ensureImages(p); const c = hiCanvas(p, 300); pages.push(kind === 'a4' ? pageA4(p, c) : pagePro(p, c)); }
+  const name = list.length > 1 ? `copertine-${kind === 'a4' ? 'a4' : 'tipografia'}-${list.length}.pdf` : `${slug(list[0])}-${kind === 'a4' ? 'a4' : 'tipografia'}.pdf`;
+  download(name, makePdf(pages)); toast(list.length > 1 ? `PDF con ${list.length} copertine scaricato` : 'PDF scaricato');
+}
+$('pdfA4').addEventListener('click', ()=>exportPdf('a4')); $('pdfBtnTop').addEventListener('click', ()=>exportPdf('a4'));
+$('pdfPro').addEventListener('click', ()=>exportPdf('pro'));
+$('pngPro').addEventListener('click', async ()=>{ await ensureImages(P); const c = hiCanvas(P, 300); c.toBlob(b=>{ download(`${slug(P)}-300dpi.png`, b); toast('Immagine a 300 dpi scaricata'); }, 'image/png'); });
+$('printBtn').addEventListener('click', async ()=>{ await ensureImages(P); const G = geom(P), c = hiCanvas(P, 300);
+  $('print').innerHTML = `<img src="${c.toDataURL('image/jpeg', 0.92)}" style="width:${G.w}mm; height:${G.h}mm" alt="">`; setTimeout(()=>window.print(), 200); });
+$('testPdf').addEventListener('click', ()=>{   // sagoma di prova: solo linee
+  const G = geom(P), x0 = (297 - G.w) / 2, y0 = (210 - G.h) / 2, b = G.b, D = P.dims, ls = [], m = 4;
+  const rect = (x, y, w, h, wd, dash) => { ls.push([x, y, x + w, y, wd, dash], [x + w, y, x + w, y + h, wd, dash], [x + w, y + h, x, y + h, wd, dash], [x, y + h, x, y, wd, dash]); };
+  rect(x0, y0, G.w, G.h, 0.15, '0.6 0.8'); rect(x0 + b, y0 + b, G.W, D.H, 0.35);
+  [G.xS, G.xF].forEach(x=>ls.push([x0 + x, y0 + b, x0 + x, y0 + b + D.H, 0.25, '2 1.5']));
+  rect(x0 + b + m, y0 + b + m, D.P - 2 * m, D.H - 2 * m, 0.15, '0.5 1'); rect(x0 + G.xF + m, y0 + b + m, D.P - 2 * m, D.H - 2 * m, 0.15, '0.5 1');
+  const mm = v => String(Math.round(v * 10) / 10);
+  download(`sagoma-${P.format}.pdf`, makePdf([{ w: 297, h: 210, images: [], lines: ls, texts: [
+    [x0 + b + D.P / 2 - 6, y0 + b + D.H / 2, 9, 'RETRO'], [x0 + G.xS + 1, y0 + b + D.H / 2, 6, 'DORSO'], [x0 + G.xF + D.P / 2 - 7, y0 + b + D.H / 2, 9, 'FRONTE'],
+    [x0, y0 - 4, 8, `Prova di stampa ${FORMATS[P.format].name}: ${mm(G.W)} x ${mm(D.H)} mm (${mm(D.P)} + ${mm(D.S)} + ${mm(D.P)}). Linea continua = taglio, tratteggio = piega del dorso.`],
+    [x0, y0 + G.h + 6, 7, 'Stampa al 100% su carta normale, ritaglia lungo la linea continua e prova nella pellicola della custodia.'] ] }]));
+  toast('Sagoma scaricata: stampala al 100% su carta normale');
+});
+
+/* ---------- Archivio dei progetti ---------- */
+let _sel = new Set();
+async function openArchive(){ await saveNow(); _sel = new Set(); await renderArchive(); $('archDlg').showModal(); }
+async function renderArchive(){
+  const list = (await dbAll('projects')).sort((a, b)=>b.updated - a.updated);
+  $('plist').innerHTML = list.length ? list.map(p=>`<div class="pcard"><img src="${esc(p.thumb || '')}" alt=""><div class="pi"><b>${esc(p.name || p.film.titolo || 'Copertina senza titolo')}</b><span class="note">${esc(FORMATS[p.format] ? FORMATS[p.format].name : '')}, ${esc(new Date(p.updated).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }))}</span></div>`
+    + `<div class="pa"><label class="chk"><input type="checkbox" data-sel="${esc(p.id)}" ${_sel.has(p.id) ? 'checked' : ''}> Seleziona</label><span style="flex:1"></span><button class="btn small" data-open="${esc(p.id)}">Apri</button><button class="btn small" data-dup="${esc(p.id)}">Duplica</button><button class="btn small danger" data-del="${esc(p.id)}">Elimina</button></div></div>`).join('')
+    : `<p class="note">Nessuna copertina salvata.</p>`;
+  $('archSel').textContent = _sel.size ? `${_sel.size} selezionate` : 'Seleziona le copertine per esportarle insieme';
+  return list;
+}
+$('archBtn').addEventListener('click', openArchive);
+$('plist').addEventListener('change', e=>{ const c = e.target.closest('[data-sel]'); if(!c) return; c.checked ? _sel.add(c.dataset.sel) : _sel.delete(c.dataset.sel); $('archSel').textContent = _sel.size ? `${_sel.size} selezionate` : 'Seleziona le copertine per esportarle insieme'; });
+$('plist').addEventListener('click', async e=>{
+  const list = await dbAll('projects'), find = id => list.find(p=>p.id === id);
+  const o = e.target.closest('[data-open]'); if(o){ P = find(o.dataset.open); $('archDlg').close(); toUI(); draw(); try{ localStorage.setItem('oc-last', P.id); }catch(err){} return; }
+  const d = e.target.closest('[data-dup]'); if(d){ const c = JSON.parse(JSON.stringify(find(d.dataset.dup))); c.id = uid(); c.name = (c.name || c.film.titolo || 'Copertina') + ' (copia)'; c.updated = Date.now(); await dbPut('projects', c); renderArchive(); toast('Copertina duplicata'); return; }
+  const x = e.target.closest('[data-del]'); if(x){ const p = find(x.dataset.del); await dbDel('projects', p.id); _sel.delete(p.id);
+    if(P.id === p.id){ P = newProject(); toUI(); draw(); }
+    renderArchive(); showUndo('Copertina eliminata: ' + (p.name || p.film.titolo || ''), async ()=>{ await dbPut('projects', p); renderArchive(); toast('Copertina ripristinata'); }); }
+});
+async function batch(kind){ if(!_sel.size){ toast('Seleziona almeno una copertina'); return; } const list = (await dbAll('projects')).filter(p=>_sel.has(p.id)).sort((a, b)=>b.updated - a.updated); await exportPdf(kind, list); }
+$('batchA4').addEventListener('click', ()=>batch('a4')); $('batchPro').addEventListener('click', ()=>batch('pro'));
+document.querySelectorAll('dialog [data-close]').forEach(b=>b.addEventListener('click', ()=>b.closest('dialog').close()));
+$('newBtn').addEventListener('click', async ()=>{ await saveNow(); P = newProject(); toUI(); draw(); toast('Nuova copertina'); });
+
+/* ---------- Avvio ---------- */
+async function init(){
+  fillSelects();
+  LOGOS = await dbAll('logos');
+  let last = null; try{ last = localStorage.getItem('oc-last'); }catch(e){}
+  const all = await dbAll('projects'), p = (last && all.find(x=>x.id === last)) || all.sort((a, b)=>b.updated - a.updated)[0];   // senza nota: la più recente
+  if(p) P = p;
+  toUI(); renderLogos(); draw();
+  window.__ready = true;
+}
+init();
+</script>
+</body>
+</html>
